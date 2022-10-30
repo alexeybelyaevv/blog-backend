@@ -1,9 +1,14 @@
 import { getMe, login, register } from "./controllers/UserController.js";
+import {
+  loginValidation,
+  postValidation,
+  registerValidation,
+} from "./validations.js";
 
 import checkAuth from "./utils/checkAuth.js";
+import { createPost } from "./controllers/PostController.js";
 import express from "express";
 import mongoose from "mongoose";
-import { registerValidation } from "./validations/auth.js";
 
 mongoose
   .connect(
@@ -20,9 +25,11 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 4444;
 
-app.post("/auth/login", login);
+app.post("/auth/login", loginValidation, login);
 app.post("/auth/register", registerValidation, register);
 app.get("/auth/me", checkAuth, getMe);
+
+app.post("/posts", checkAuth, postValidation, createPost);
 
 app.listen(PORT, (err) => {
   if (err) {
